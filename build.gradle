@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'maven-publish' // maven 사용
+}
+
+group 'me.anno'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'com.squareup', name: 'javapoet', version: '1.13.0'
+    implementation 'com.google.auto.service:auto-service:1.0-rc5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
