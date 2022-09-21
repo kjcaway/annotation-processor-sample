@@ -5,11 +5,11 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.type.MethodMetadata;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -17,19 +17,28 @@ public class StartUpListener implements ApplicationListener<ApplicationStartedEv
     @Override
     public void onApplicationEvent(ApplicationStartedEvent applicationStartedEvent) {
         System.out.println("=======================");
-        System.out.println("Application Started...");
+        System.out.println("start annotation scan..");
         System.out.println("=======================");
+        annotationScan();
+    }
+
+    private void annotationScan(){
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(true);
 
-        provider.addIncludeFilter(new MyLogAnnotationFilter(MyLog.class));
+        provider.addIncludeFilter(new AnnotationTypeFilter(MyLog.class));
 
         Set<BeanDefinition> beanDefs = provider.findCandidateComponents("me.javaexample.javademo");
-        List<String> annotatedBeans = new ArrayList<>();
         for (BeanDefinition bd : beanDefs) {
             if (bd instanceof AnnotatedBeanDefinition) {
-                Map<String, Object> annotAttributeMap = ((AnnotatedBeanDefinition) bd)
-                        .getMetadata()
-                        .getAnnotationAttributes(MyLog.class.getCanonicalName());
+                AnnotationMetadata metadata = ((AnnotatedBeanDefinition) bd).getMetadata();
+                Set<MethodMetadata> methodMetadatas = metadata.getAnnotatedMethods(MyLog.class.getCanonicalName());
+                for (MethodMetadata methodMetadata : methodMetadatas) {
+                    if(!methodMetadata.getReturnTypeName().equals(String.class.getCanonicalName())){
+                        System.out.println("Error for Class " + bd.getBeanClassName());
+                        System.out.println("Method annotated " + MyLog.class.getCanonicalName() + " must be return " + String.class.getCanonicalName());
+                        System.out.println("But " + methodMetadata.getMethodName() + " method return " + methodMetadata.getReturnTypeName());
+                    }
+                }
             }
         }
     }
