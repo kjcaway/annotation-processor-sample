@@ -3,6 +3,7 @@ package me.anno;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.AnnotationMetadata;
@@ -34,9 +35,10 @@ public class StartUpListener implements ApplicationListener<ApplicationStartedEv
                 Set<MethodMetadata> methodMetadatas = metadata.getAnnotatedMethods(MyLog.class.getCanonicalName());
                 for (MethodMetadata methodMetadata : methodMetadatas) {
                     if(!methodMetadata.getReturnTypeName().equals(String.class.getCanonicalName())){
-                        System.out.println("Error for Class " + bd.getBeanClassName());
-                        System.out.println("Method annotated " + MyLog.class.getCanonicalName() + " must be return " + String.class.getCanonicalName());
-                        System.out.println("But " + methodMetadata.getMethodName() + " method return " + methodMetadata.getReturnTypeName());
+                        String errorMessage = "Error for Class " + bd.getBeanClassName() + "." +
+                                " Method annotated " + MyLog.class.getCanonicalName() + " must be return " + String.class.getCanonicalName() + "." +
+                                " But " + methodMetadata.getMethodName() + " method return " + methodMetadata.getReturnTypeName() + ".";
+                        throw new ApplicationContextException(errorMessage);
                     }
                 }
             }
