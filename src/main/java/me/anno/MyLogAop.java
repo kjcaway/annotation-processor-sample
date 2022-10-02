@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.DeclareError;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -21,6 +22,12 @@ public class MyLogAop {
     static final String wrongSignatureError =
             "Method annotated with @MyLog must return String type";     // it's not working..
 
+    private final StringRedisTemplate redisTemplate;
+
+    public MyLogAop(StringRedisTemplate redisTemplate){
+        this.redisTemplate = redisTemplate;
+    }
+
     @Around("@annotation(me.anno.MyLog)")
     public Object myLogAop(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         String uuid = UUID.randomUUID().toString();
@@ -29,7 +36,7 @@ public class MyLogAop {
         MyLog annotation = method.getAnnotation(MyLog.class);
 
         long start = System.currentTimeMillis();
-
+        pushEvent(uuid, uuid);
         Thread.sleep(2000);
 
         try {
@@ -39,6 +46,11 @@ public class MyLogAop {
             long end = System.currentTimeMillis();
             System.out.println(">>> return value: " + uuid);
             System.out.println(">>> spend time: " + (end - start));
+            pushEvent(uuid + ":time", (end - start) + "ms");
         }
+    }
+
+    private void pushEvent(String key, String value){
+        redisTemplate.opsForList().leftPush(key, value);
     }
 }

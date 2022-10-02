@@ -13,9 +13,18 @@ repositories {
 }
 
 dependencies {
+    /** AOP **/
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    /** Java poet(for library packaging) **/
     implementation group: 'com.squareup', name: 'javapoet', version: '1.13.0'
+
+    /** Auto service(generate META-INF files and directory ) **/
     implementation 'com.google.auto.service:auto-service:1.0-rc5'
+
+    /** Redis **/
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 }
@@ -30,6 +39,7 @@ jar {
 
 
 publishing {
+    /** publish jar package **/
     publications {
         maven(MavenPublication) {
             from components.java
