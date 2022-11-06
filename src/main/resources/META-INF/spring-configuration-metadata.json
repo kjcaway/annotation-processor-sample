@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "mylog.redis.host",
+      "defaultValue": "localhost",
+      "description": "MyLog Annotation need redis host value. (default: localhost)"
+    },
+    {
+      "name": "mylog.redis.port",
+      "defaultValue": "6379",
+      "description": "MyLog Annotation need redis port value. (default: 6379)"
+    }
+  ],
+  "hints": [
+    {
+      "name": "mylog.redis.host"
+    }
+  ]
+}

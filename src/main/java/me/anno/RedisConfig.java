@@ -11,10 +11,10 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 @Configuration
 public class RedisConfig {
 
-    @Value("${spring.redis.host:localhost}")
+    @Value("${mylog.redis.host}")
     private String host;
 
-    @Value("${spring.redis.port:6379}")
+    @Value("${mylog.redis.port}")
     private int port;
 
     @Bean

@@ -21,6 +21,7 @@ public class StartUpListener implements ApplicationListener<ApplicationStartedEv
         System.out.println("start annotation scan..");
         System.out.println("=======================");
         annotationScan();
+        System.out.println("success annotation scan.");
     }
 
     private void annotationScan(){
